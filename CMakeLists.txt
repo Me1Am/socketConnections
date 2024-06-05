@@ -21,6 +21,7 @@ project(sockConn VERSION 1.0.0 DESCRIPTION "Simple unix socket connection abstra
 add_library(sockConn SHARED
 	"include/sockConn.h"	
 
+	"src/serializer.cpp"
 	"src/server.cpp"
 	"src/client.cpp"
 )

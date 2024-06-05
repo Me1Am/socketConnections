@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "sockConn.h"
+#include <sockConn.h>
 
 int main(int argc, char** argv) {
 	Server* server = scServerCreate(SERVER_SOCK_PATH);

@@ -81,8 +81,8 @@ void scServerConnectionAccept(Server* server) {
 	#endif
 }
 
-void scServerSendDataToClient(Server* server, ServerClient* client, const void* data) {
-	Packet packet = Packet(data, sizeof(data));
+void scServerSendDataToClient(Server* server, ServerClient* client, void* data) {
+	Packet packet = Packet(0U, data, sizeof(data));
 	
 	char buf[256];
 	std::fill(std::begin(buf), std::end(buf), 0);

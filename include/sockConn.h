@@ -54,10 +54,11 @@ struct Client {
  * @attention NOT IMPLEMENTED
 */// TODO Fully implement, including serializing and deserializing
 struct Packet {
-	const void* data;	// Data
-	const size_t size;	// The size of the data
+	unsigned int type;
+	size_t size;	// The size of the data
+	void* data;		// Data
 
-	Packet(const void* data, const size_t size) : data(data), size(size) {}
+	Packet(const unsigned int type, void* data, size_t size) : type(type), data(data), size(size) {}
 };
 
 
