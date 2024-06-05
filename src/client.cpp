@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <cerrno>
 
-#include "../include/socketConnections.h"
+#include "../include/sockConn.h"
 
 Client* scClientCreate(const std::string& socketPath) {
 	Client* client = new Client();
@@ -68,19 +68,4 @@ void scClientRecieveDataFromServer(Client* client, char* buf) {
 	int responseStatus = recv(client->socket, buf, sizeof(char[256]), 0);
 	if(responseStatus == -1)
 		std::cerr << "CLIENT: Error when recieving message: " << strerror(errno) << '\n';
-}
-
-int main(int argc, char** argv) {
-	Client* client = scClientCreate(CLIENT_SOCK_PATH);
-	scClientConnectServer(client, SERVER_SOCK_PATH);
-	scClientSendDataToServer(client, CLIENT_MSG);
-	
-	char buf[256];
-	std::fill(std::begin(buf), std::end(buf), 0);
-	scClientRecieveDataFromServer(client, buf);
-	std::cout << buf << '\n';
-
-	scClientDestroy(client);
-
-	return 0;
 }
