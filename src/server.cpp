@@ -68,7 +68,11 @@ void scServerConnectionAccept(Server* server) {
 	ServerClient** client = &(server->clients[index]);
 	(*client) = new ServerClient();
 
-	(*client)->clientFD = accept(server->socket, (sockaddr*)&(*client)->addr, (socklen_t*)&len);
+	#ifdef WIN32
+		(*client)->clientFD = accept(server->socket, (sockaddr*)&(*client)->addr, (int*)&len);
+	#else
+		(*client)->clientFD = accept(server->socket, (sockaddr*)&(*client)->addr, (socklen_t*)&len);
+	#endif
 	if((*client)->clientFD == -1){
 		std::cerr << "SERVER: Accept error: " << strerror(errno) << '\n';
 		close(server->socket);
@@ -81,7 +85,7 @@ void scServerConnectionAccept(Server* server) {
 	#endif
 }
 
-void scServerSendDataToClient(Server* server, ServerClient* client, void* data) {
+void scServerSendDataToClient(Server* server, ServerClient* client, const void* data) {
 	Packet packet = Packet(0U, data, sizeof(data));
 	
 	char buf[256];

@@ -59,7 +59,7 @@ void scClientSendDataToServer(Client* client, const void* data) {
 	std::fill(std::begin(buf), std::end(buf), 0);
 	strcpy(buf, CLIENT_MSG);
 	
-	int status = send(client->socket, &buf, sizeof(buf), 0);
+	int status = send(client->socket, buf, strlen(buf), 0);
 	if(status == -1)
 		std::cerr << "CLIENT: Send error. " << strerror(errno) <<'\n';
 }

@@ -19,12 +19,19 @@ endif()
 #                                  #
 project(sockConn VERSION 1.0.0 DESCRIPTION "Simple unix socket connection abstraction layer for inter-process connectivity")
 add_library(sockConn SHARED
-	"include/sockConn.h"	
+	"include/sockConn.h"
 
 	"src/serializer.cpp"
 	"src/server.cpp"
 	"src/client.cpp"
 )
+
+if(WIN32)
+	target_link_libraries(sockConn PRIVATE wsock32)
+	target_compile_definitions(sockConn PRIVATE DEBUG WIN32)
+else()
+	target_compile_definitions(sockConn PRIVITE DEBUG LINUX)
+endif()
 
 include_directories(sockConn PRIVATE "./src/" "./include/")
 set_target_properties(sockConn PROPERTIES
@@ -55,20 +62,35 @@ endif()
 #                                  #
 project(server VERSION 1.0)
 project(client VERSION 1.0)
+project(serial VERSION 1.0)
 
 add_executable(server)
 add_executable(client)
+add_executable(serial)
 
 if(WIN32)
 	target_compile_definitions(server PRIVATE DEBUG WIN32)
 	target_compile_definitions(client PRIVATE DEBUG WIN32)
+	target_compile_definitions(serial PRIVATE DEBUG WIN32)
 else()
 	target_compile_definitions(server PRIVATE DEBUG LINUX)
 	target_compile_definitions(client PRIVATE DEBUG LINUX)
+	target_compile_definitions(serial PRIVATE DEBUG LINUX)
 endif()
 
 target_sources(server PRIVATE "demo/server.cpp")
 target_sources(client PRIVATE "demo/client.cpp")
+target_sources(serial PRIVATE "demo/serial.cpp")
 
-target_link_libraries(server "-lsockConn")
-target_link_libraries(client "-lsockConn")
+if(WIN32)
+	target_link_directories(server PRIVATE "C:/Users/JTK6759/Documents/programming/cpp/cppPrograms/socketConnections/build")
+	target_link_directories(client PRIVATE "C:/Users/JTK6759/Documents/programming/cpp/cppPrograms/socketConnections/build")
+	target_link_directories(serial PRIVATE "C:/Users/JTK6759/Documents/programming/cpp/cppPrograms/socketConnections/build")
+	target_link_libraries(server "-lsockConn")
+	target_link_libraries(client "-lsockConn")
+	target_link_libraries(serial "-lsockConn")
+else()
+	target_link_libraries(server "-lsockConn")
+	target_link_libraries(client "-lsockConn")
+	target_link_libraries(serial "-lsockConn")
+endif()

@@ -1,13 +1,17 @@
+#pragma packed(1)
+
 #include <string>
 
 #ifdef WIN32	// TODO Implement functionality for windows with winsock
 	#include <winsock2.h>
+	#include "C:\Users\JTK6759\Documents\apps\msys2\ucrt64\include\afunix.h"
 #else
 	#include <sys/socket.h>
 	#include <sys/un.h>
 #endif
 
 #define MAX_CLIENTS 10	// Maximum number of client connections for a server
+#define MAX_BUF_SIZE 512
 
 // DEMO defines
 #define SERVER_SOCK_PATH "unix_sock.server"
@@ -54,12 +58,36 @@ struct Client {
  * @attention NOT IMPLEMENTED
 */// TODO Fully implement, including serializing and deserializing
 struct Packet {
-	unsigned int type;
-	size_t size;	// The size of the data
-	void* data;		// Data
+	const unsigned int type;
+	const size_t size;	// The size of the data
+	const void* data;		// Data
 
-	Packet(const unsigned int type, void* data, size_t size) : type(type), data(data), size(size) {}
-};
+	Packet(const unsigned int type, const void* data, const size_t size) : type(type), data(data), size(size) {}
+}__attribute__((packed));
+
+
+
+
+
+/**************************
+ *-------< Serial >-------*
+ **************************/
+
+/**
+ * @brief Serialize a `Packet` struct into a passed pointer
+ * @param packet The packet to serialize
+ * @param out A pointer for the serialized packet
+ * @note Can only serialize packets with primitives as its data
+*/
+void scPacketSerialize(Packet* packet, char* out);
+/**
+ * @brief Deserialize char* to a passed in `Packet` pointer
+ * @param in A pointer to a serialized `Packet` struct
+ * @return A pointer to the a deserialized `Packet` struct
+ * @note Assumes that the serialized packet's data is a primitive
+*/
+Packet* scPacketDeserialize(char* in);
+
 
 
 

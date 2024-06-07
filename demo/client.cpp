@@ -5,7 +5,9 @@
 int main(int argc, char** argv) {
 	Client* client = scClientCreate(CLIENT_SOCK_PATH);
 	scClientConnectServer(client, SERVER_SOCK_PATH);
-	scClientSendDataToServer(client, CLIENT_MSG);
+	
+	const char msg[19] = "HELLO FROM CLIENT\0";
+	scClientSendDataToServer(client, msg);
 	
 	char buf[256];
 	std::fill(std::begin(buf), std::end(buf), 0);

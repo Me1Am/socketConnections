@@ -2,54 +2,37 @@
 
 #include "../include/sockConn.h"
 
-#define MAX_BUF_SIZE 512
-
-/**
- * @brief Serialize a `Packet` struct into a passed pointer
- * @param packet The packet to serialize
- * @param out A pointer for the serialized packet
- * @note Can only serialize packets with primitives as its data
-*/
 void scPacketSerialize(Packet* packet, char* out) {
-	int *q = (int*)out;
+	unsigned int *q = (unsigned int*)out;
 	
 	*q = packet->type;
 	q++;
 	*q = packet->size;
-	q++;
+	q += 2;	// size_t will be 64bit
 
 	// Copy data from packet to "out"
-	char* p = (char*)q;
-	char data[sizeof(packet->data)];
-	std::copy(
-		static_cast<const char*>(static_cast<const void*>(&packet->data)),
-		static_cast<const char*>(static_cast<const void*>(&packet->data)) + sizeof(packet->data),
-		data
-	);
-	for(int i = 0; i < MAX_BUF_SIZE; i++) {
-		*p = data[i];
+	char* p = (char*)q;	// "8bit" pointer
+	for(int i = 0; i < packet->size; i++) {
+		*p = ((char*)packet->data)[i];	// Read one byte
 		p++;
 	}
 }
 
-/**
- * @brief Deserialize char* to a passed in `Packet` pointer
- * @param in A pointer to a serialized `Packet` struct
- * @param packet A pointer to the `Packet` struct to write into
- * @note Assumes that the serialized packet's data is a primitive
-*/
-void scPacketDeserialize(char* in, Packet* packet) {
-	int *q = (int*)in;
-	
-	packet->type = *q;
-	q++;
-	packet->size = *q;
-	q++;
+Packet* scPacketDeserialize(char* in) {
+	unsigned int *q = (unsigned int*)in;
 
+	unsigned int type = *q;
+	q++;
+	size_t size = *q;
+	q += 2;
+
+	char data[size];
 	// Copy data from "in" to the packet
 	char* p = (char*)q;
-	for(int i = 0; i < MAX_BUF_SIZE; i++) {
-		((char*)packet->data)[i] = *p;
+	for(int i = 0; i < size; i++) {
+		data[i] = *p;
 		p++;
 	}
+
+	return new Packet(type, data, size);
 }
