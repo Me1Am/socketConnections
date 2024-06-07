@@ -30,7 +30,7 @@ if(WIN32)
 	target_link_libraries(sockConn PRIVATE wsock32)
 	target_compile_definitions(sockConn PRIVATE DEBUG WIN32)
 else()
-	target_compile_definitions(sockConn PRIVITE DEBUG LINUX)
+	target_compile_definitions(sockConn PRIVATE DEBUG LINUX)
 endif()
 
 include_directories(sockConn PRIVATE "./src/" "./include/")

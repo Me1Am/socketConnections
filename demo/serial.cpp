@@ -69,9 +69,10 @@ int main(int argc, char** argv) {
 		std::cout << "Receiving: " << data << '\n';
 	}
 	{	// Struct
-		struct Tester { int id; char msg[19]; };
-		Tester test = { 0b11111111U, "HELLO FROM SERIAL\0" };
-		std::cout << "Sending: \"Tester\" struct: " << test.id << ", " << test.msg << '\n';
+		struct BoolData { char uiName[8]; bool val; };
+		struct Element { double id; BoolData data; };
+		Element test = { ((double)1.24), { "Status\0", true } };
+		std::cout << "Sending: \"Element\" struct: " << test.id << ", " << test.data.uiName << ": " << test.data.val << '\n';
 		Packet* packet = new Packet(1U, &test, sizeof(test));
 		
 		std::fill(std::begin(serial), std::end(serial), 0);
@@ -79,8 +80,8 @@ int main(int argc, char** argv) {
 
 		Packet* out = scPacketDeserialize(serial);
 
-		Tester data = *((Tester*)out->data);
-		std::cout << "Receiving: \"Tester\" struct: " << test.id << ", " << test.msg << '\n';
+		Element data = *((Element*)out->data);
+		std::cout << "Receiving: \"Element\" struct: " << test.id << ", " << data.data.uiName << ": " << data.data.val << '\n';
 	}
 
 	std::cout << "end\n";
