@@ -13,12 +13,6 @@
 #define MAX_CLIENTS 10	// Maximum number of client connections for a server
 #define MAX_BUF_SIZE 512
 
-// DEMO defines
-#define SERVER_SOCK_PATH "unix_sock.server"
-#define CLIENT_SOCK_PATH "unix_sock.client"
-#define SERVER_MSG "HELLO FROM SERVER"
-#define CLIENT_MSG "HELLO FROM CLIENT"
-
 
 
 
@@ -56,7 +50,7 @@ struct Client {
  * @brief Packet struct, used to pass data between a servers and clients, 
  * 
  * @attention NOT IMPLEMENTED
-*/// TODO Fully implement, including serializing and deserializing
+*/
 struct Packet {
 	const unsigned int type;
 	const size_t size;	// The size of the data

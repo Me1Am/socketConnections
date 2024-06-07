@@ -41,7 +41,7 @@ void scServerDestroy(Server* server) {
 			delete server->clients[i];
 		}
 	}
-	remove(SERVER_SOCK_PATH);	// Delete socket file
+	remove(server->addr.sun_path);	// Delete socket file
 
 	delete server;
 }
@@ -90,7 +90,7 @@ void scServerSendDataToClient(Server* server, ServerClient* client, const void* 
 	
 	char buf[256];
 	std::fill(std::begin(buf), std::end(buf), 0);
-	strcpy(buf, SERVER_MSG);
+	strcpy(buf, "HELLO FROM SERVER");
 
 	int status = send(client->clientFD, buf, strlen(buf), 0);
 	if(status == -1)

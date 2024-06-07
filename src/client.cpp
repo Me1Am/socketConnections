@@ -34,7 +34,7 @@ Client* scClientCreate(const std::string& socketPath) {
 
 void scClientDestroy(Client* client) {
 	close(client->socket);
-	remove(CLIENT_SOCK_PATH);
+	remove(client->addr.sun_path);
 
 	delete client;
 }
@@ -57,7 +57,7 @@ void scClientConnectServer(Client* client, const std::string& socketPath) {
 void scClientSendDataToServer(Client* client, const void* data) {
 	char buf[256];
 	std::fill(std::begin(buf), std::end(buf), 0);
-	strcpy(buf, CLIENT_MSG);
+	strcpy(buf, "HELLO FROM CLIENT");
 	
 	int status = send(client->socket, buf, strlen(buf), 0);
 	if(status == -1)

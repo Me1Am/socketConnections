@@ -3,7 +3,7 @@
 #include <sockConn.h>
 
 int main(int argc, char** argv) {
-	Server* server = scServerCreate(SERVER_SOCK_PATH);
+	Server* server = scServerCreate("unix_sock.server");
 	scServerConnectionOpen(server);
 	scServerConnectionAccept(server);
 
