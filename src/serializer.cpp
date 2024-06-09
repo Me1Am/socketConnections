@@ -2,7 +2,7 @@
 
 #include "../include/sockConn.h"
 
-void scPacketSerialize(Packet* packet, char* out) {
+void scPacketSerialize(const Packet* packet, char* out) {
 	unsigned int *q = (unsigned int*)out;
 	
 	*q = packet->type;
@@ -12,10 +12,7 @@ void scPacketSerialize(Packet* packet, char* out) {
 
 	// Copy data from packet to "out"
 	char* p = (char*)q;	// "8bit" pointer
-	for(int i = 0; i < packet->size; i++) {
-		*p = ((char*)packet->data)[i];	// Read one byte
-		p++;
-	}
+	memcpy(p, packet->data, packet->size);
 }
 
 Packet* scPacketDeserialize(char* in) {
@@ -26,13 +23,10 @@ Packet* scPacketDeserialize(char* in) {
 	size_t size = *q;
 	q += 2;
 
-	char data[size];
 	// Copy data from "in" to the packet
+	char* data = new char[size];
 	char* p = (char*)q;
-	for(int i = 0; i < size; i++) {
-		data[i] = *p;
-		p++;
-	}
+	memcpy(data, p, size);
 
 	return new Packet(type, data, size);
 }

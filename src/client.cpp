@@ -54,18 +54,21 @@ void scClientConnectServer(Client* client, const std::string& socketPath) {
 	#endif
 }
 
-void scClientSendDataToServer(Client* client, const void* data) {
-	char buf[256];
+void scClientSendDataToServer(Client* client, const Packet* packet) {
+	char buf[MAX_BUF_SIZE];
 	std::fill(std::begin(buf), std::end(buf), 0);
-	strcpy(buf, "HELLO FROM CLIENT");
+	scPacketSerialize(packet, buf);
 	
-	int status = send(client->socket, buf, strlen(buf), 0);
+	int status = send(client->socket, buf, MAX_BUF_SIZE, 0);
 	if(status == -1)
 		std::cerr << "CLIENT: Send error. " << strerror(errno) <<'\n';
 }
 
-void scClientRecieveDataFromServer(Client* client, char* buf) {
-	int responseStatus = recv(client->socket, buf, sizeof(char[256]), 0);
+Packet* scClientRecieveDataFromServer(Client* client) {
+	char buf[MAX_BUF_SIZE];
+	int responseStatus = recv(client->socket, buf, MAX_BUF_SIZE, 0);
 	if(responseStatus == -1)
 		std::cerr << "CLIENT: Error when recieving message: " << strerror(errno) << '\n';
+
+	return scPacketDeserialize(buf);
 }

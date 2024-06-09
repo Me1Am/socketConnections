@@ -73,7 +73,7 @@ struct Packet {
  * @param out A pointer for the serialized packet
  * @note Can only serialize packets with primitives as its data
 */
-void scPacketSerialize(Packet* packet, char* out);
+void scPacketSerialize(const Packet* packet, char* out);
 /**
  * @brief Deserialize char* to a passed in `Packet` pointer
  * @param in A pointer to a serialized `Packet` struct
@@ -100,19 +100,17 @@ Server* scServerCreate(const std::string& socketPath);
 
 /**
  * @brief Sends a packet to a client
- * @param server The server for the data to originate from
  * @param client The recieving client
- * @param data The data to be sent
+ * @param packet A packet to send
 */
-void scServerSendDataToClient(Server* server, ServerClient* client, const void* data);
+void scServerSendDataToClient(ServerClient* client, const Packet* packet);
 
 /**
  * @brief Recieves a packet from a client
- * @param server The server accepting the data
  * @param client The sending client, from the `server->clients` array
- * @param buf The buffer to write into
+ * @return A pointer to the received packet
 */
-void scServerRecieveDataFromClient(Server* server, ServerClient* client, char* buf);
+Packet* scServerRecieveDataFromClient(ServerClient* client);
 
 /**
  * @brief Open server for connections
@@ -165,13 +163,13 @@ void scClientConnectServer(Client* client, const std::string& socketPath);
 /**
  * @brief Sends a packet to the connected server
  * @param client The client to send the data from
- * @param data The data to be sent
+ * @param packet A packet to send
 */
-void scClientSendDataToServer(Client* client, const void* data);
+void scClientSendDataToServer(Client* client, const Packet* packet);
 
 /**
  * @brief Recieves a packet from the connected server
  * @param client The recieving client
- * @param buf The buffer to write into
+ * @return A pointer to the received packet
 */
-void scClientRecieveDataFromServer(Client* client, char* buf);
+Packet* scClientRecieveDataFromServer(Client* client);

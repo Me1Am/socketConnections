@@ -85,52 +85,21 @@ void scServerConnectionAccept(Server* server) {
 	#endif
 }
 
-void scServerSendDataToClient(Server* server, ServerClient* client, const void* data) {
-	Packet packet = Packet(0U, data, sizeof(data));
-	
-	char buf[256];
+void scServerSendDataToClient(ServerClient* client, const Packet* packet) {
+	char buf[MAX_BUF_SIZE];
 	std::fill(std::begin(buf), std::end(buf), 0);
-	strcpy(buf, "HELLO FROM SERVER");
+	scPacketSerialize(packet, buf);
 
-	int status = send(client->clientFD, buf, strlen(buf), 0);
+	int status = send(client->clientFD, buf, MAX_BUF_SIZE, 0);
 	if(status == -1)
-		std::cerr << "SERVER: Unable to send message to client.\n";
+		std::cerr << "SERVER: Send error. " << strerror(errno) <<'\n';
 }
 
-void scServerRecieveDataFromClient(Server* server, ServerClient* client, char* buf) {
-	int responseStatus = recv(client->clientFD, buf, sizeof(char[256]), 0);
-		if(responseStatus == -1){
-			std::cerr << "SERVER: Error when receiving message: " << strerror(errno) << '\n';
-			#ifdef DEBUG	// Error messages pulled from the man page
-				switch(errno) {
-					case EAGAIN:	// EWOULDBLOCK
-						std::cerr << "The socket is nonblocking, or a receive timeout was set and the timeout expired\n";
-						break;
-					case EBADF:
-						std::cerr << "Invalid file descriptor for the argument \"sockfd\"\n";
-						break;
-					case ECONNREFUSED:
-						std::cerr << "Connection refused\n";
-						break;
-					case EFAULT:
-						std::cerr << "The receive buffer pointer(s) point outside the process's address space\n";
-						break;
-					case EINTR:
-						std::cerr << "The receive was interrupted by delivery of a signal before any data was available, see man page: signal(7)\n";
-						break;
-					case EINVAL:
-						std::cerr << "Invalid argument\n";
-						break;
-					case ENOMEM:
-						std::cerr << "Could not allocate memory for recvmsg()\n";
-						break;
-					case ENOTCONN:
-						std::cerr << "The socket is associated with a connection-oriented protocol and has not been connected, see man pages: connect(2) and accept(2)\n";
-						break;
-					case ENOTSOCK:
-						std::cerr << "The \"sockfd\" file descriptor does not refer to a socket\n";
-						break;
-				}
-			#endif
-	}
+Packet* scServerRecieveDataFromClient(ServerClient* client) {
+	char buf[MAX_BUF_SIZE];
+	int responseStatus = recv(client->clientFD, buf, MAX_BUF_SIZE, 0);
+	if(responseStatus == -1)
+		std::cerr << "SERVER: Error when receiving message: " << strerror(errno) << '\n';
+	
+	return scPacketDeserialize(buf);
 }

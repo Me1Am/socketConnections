@@ -6,6 +6,21 @@
 
 #include <sockConn.h>
 
+template<typename T>
+struct Vec2D {
+	T x;
+	T y;
+};
+typedef Vec2D<float> Vec2Df;
+
+struct UIText {
+	char text[64];
+	
+	Vec2Df pos;	
+	float scale;
+	bool visible;
+};
+
 int main(int argc, char** argv) {
 	std::cout << "start\n";
 
@@ -69,19 +84,29 @@ int main(int argc, char** argv) {
 		std::cout << "Receiving: " << data << '\n';
 	}
 	{	// Struct
-		struct BoolData { char uiName[8]; bool val; };
-		struct Element { double id; BoolData data; };
-		Element test = { ((double)1.24), { "Status\0", true } };
-		std::cout << "Sending: \"Element\" struct: " << test.id << ", " << test.data.uiName << ": " << test.data.val << '\n';
-		Packet* packet = new Packet(1U, &test, sizeof(test));
-		
+		UIText* element = new UIText({ "SENDIN'\0", { 50.f, 50.f }, 1.f, true });
+		std::cout 
+			<< "Recieved UIText from server: "
+			<< "\n  Text: \"" << element->text << '\"'
+			<< "\n  Pos: " << element->pos.x << ", " << element->pos.y
+			<< "\n  Scale: " << element->scale
+			<< "\n  Visible: " << element->visible
+		<< '\n';
+		Packet* packet = new Packet(1U, element, sizeof(*element));
+
 		std::fill(std::begin(serial), std::end(serial), 0);
 		scPacketSerialize(packet, serial);
 
 		Packet* out = scPacketDeserialize(serial);
 
-		Element data = *((Element*)out->data);
-		std::cout << "Receiving: \"Element\" struct: " << test.id << ", " << data.data.uiName << ": " << data.data.val << '\n';
+		UIText data = *((UIText*)out->data);
+		std::cout 
+			<< "Recieved UIText from server: "
+			<< "\n  Text: \"" << data.text << '\"'
+			<< "\n  Pos: " << data.pos.x << ", " << data.pos.y
+			<< "\n  Scale: " << data.scale
+			<< "\n  Visible: " << data.visible
+		<< '\n';
 	}
 
 	std::cout << "end\n";
