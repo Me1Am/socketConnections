@@ -47,9 +47,7 @@ struct Client {
 };
 
 /**
- * @brief Packet struct, used to pass data between a servers and clients, 
- * 
- * @attention NOT IMPLEMENTED
+ * @brief Packet struct, used to pass data between a servers and clients
 */
 struct Packet {
 	const unsigned int type;

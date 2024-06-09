@@ -1,3 +1,0 @@
-https://isocpp.org/wiki/faq/serialization
-https://tangentsoft.com/wskfaq/articles/bsd-compatibility.html
-https://devblogs.microsoft.com/commandline/af_unix-comes-to-windows/
